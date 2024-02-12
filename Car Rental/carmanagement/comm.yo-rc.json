@@ -1,0 +1,8 @@
+[
+  {
+    "client": "rentalcarapp",
+    "server": "carmanagement",
+    "type": "sync",
+    "framework": "rest-api"
+  }
+]

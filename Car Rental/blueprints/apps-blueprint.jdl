@@ -1,0 +1,115 @@
+application {
+    config {
+        baseName rentalcarapp
+        applicationType gateway
+        packageName ui
+        authenticationType oauth2
+        serverPort 3001
+        databaseType no
+        prodDatabaseType no
+        logManagementType no
+        serviceDiscoveryType no
+        clientFramework react
+        blueprint [react]
+    }
+}
+ application {
+    config {
+        baseName carmanagement
+        applicationType microservice
+        packageName com.carmanagement
+        authenticationType oauth2
+        serverPort 4000
+        databaseType sql
+        devDatabaseType postgresql
+        prodDatabaseType postgresql
+        databasePort 7000
+        logManagementType no
+        serviceDiscoveryType no
+        clientFramework no
+        blueprint [gomicro]
+    }
+}
+ application {
+    config {
+        baseName customermanagement
+        applicationType microservice
+        packageName com.customermanagement
+        authenticationType oauth2
+        serverPort 4001
+        databaseType sql
+        devDatabaseType postgresql
+        prodDatabaseType postgresql
+        databasePort 7001
+        logManagementType no
+        serviceDiscoveryType no
+        clientFramework no
+        blueprint [gomicro]
+    }
+}
+ application {
+    config {
+        baseName reservationmanagement
+        applicationType microservice
+        packageName com.reservationmanagement
+        authenticationType oauth2
+        serverPort 4003
+        databaseType sql
+        devDatabaseType postgresql
+        prodDatabaseType postgresql
+        databasePort 7003
+        logManagementType no
+        serviceDiscoveryType no
+        clientFramework no
+        blueprint [gomicro]
+    }
+}
+ application {
+    config {
+        baseName paymentmanagement
+        applicationType microservice
+        packageName com.paymentmanagement
+        authenticationType oauth2
+        serverPort 4002
+        databaseType sql
+        devDatabaseType postgresql
+        prodDatabaseType postgresql
+        databasePort 7002
+        logManagementType no
+        serviceDiscoveryType no
+        clientFramework no
+        blueprint [gomicro]
+    }
+}
+ 
+communication {
+    client "rentalcarapp"
+    server "carmanagement"
+    type "sync"
+    framework "rest-api"
+}
+
+ 
+communication {
+    client "rentalcarapp"
+    server "paymentmanagement"
+    type "sync"
+    framework "rest-api"
+}
+
+ 
+communication {
+    client "rentalcarapp"
+    server "reservationmanagement"
+    type "sync"
+    framework "rest-api"
+}
+
+ 
+communication {
+    client "rentalcarapp"
+    server "customermanagement"
+    type "sync"
+    framework "rest-api"
+}
+
