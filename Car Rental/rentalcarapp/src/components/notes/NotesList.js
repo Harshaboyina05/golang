@@ -6,24 +6,34 @@ import { useAuth } from 'react-oidc-context';
 const NotesList = ({ notesApp }) => {
   const [notes, setNotes] = useState([]);
   const [showAddNotePopup, setShowAddNotePopup] = useState(false);
-  const [newNote, setNewNote] = useState({ subject: '', summary: '' });
   const [openModal, setOpenModal] = useState(false);
+  const [newNote, setNewNote] = useState({
+    make: '',
+    model: '',
+    year: '',
+    license_plate: '',
+    color: '',
+    mileage: '',
+    status: 'available',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
   const auth = useAuth();
 
   useEffect(() => {
     // Fetch notes from the backend API
     const fetchNotes = async () => {
       try {
-        let envString = 'REACT_APP_MICROSERVICE_' + notesApp.toUpperCase();
-        const response = await fetch(process.env[envString] + `/api/notes`, {
+        let envString = 'REACT_APP_MICROSERVICE_CARMANAGEMENT'
+        const response = await fetch(process.env[envString] + `/car`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${auth.user.access_token}`,
             'Content-Type': 'application/json',
           },
-        }); // Replace with your actual API endpoint
+        });
         const data = await response.json();
-        if (data != null) setNotes(data); // Assuming the API response is an array of notes
+        if (data != null) setNotes(data);
       } catch (error) {
         console.error('Error fetching notes:', error);
       }
@@ -31,159 +41,129 @@ const NotesList = ({ notesApp }) => {
     fetchNotes();
   }, []);
 
-  const handleSubmit = async Data => {
-    try {
-      // Make API call to post the collected data
-      let envString = 'REACT_APP_MICROSERVICE_' + notesApp.toUpperCase();
-      const response = await fetch(process.env[envString] + `/api/notes`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${auth.user.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(Data),
-      });
-      // Check if the request was successful (status code 2xx)
-      if (response.ok) {
-        const responseData = await response.json(); // Assuming the response is in JSON format
-        // Use a callback function with setNotes to ensure you have the latest state
-        setNotes(prevNotes => [
-          ...prevNotes,
-          {
-            id: responseData.id,
-            subject: responseData.subject,
-            description: responseData.description,
-          },
-        ]);
-      } else {
-        // Handle error, maybe show an error message
-        console.error('Error submitting data:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-  };
-
   const handleInputChange = e => {
     const { name, value } = e.target;
-    setNewNote({ ...newNote, [name]: value });
+    setNewNote(prevNote => ({
+      ...prevNote,
+      [name]: value,
+    }));
   };
 
   const handlePopupClose = () => {
     setShowAddNotePopup(false);
-    setNewNote({ subject: '', summary: '' });
+    setNewNote({
+      make: '',
+      model: '',
+      year: '',
+      license_plate: '',
+      color: '',
+      mileage: '',
+      status: 'available',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
   };
 
-  const handleAddNote = Data => {
-    // Add logic to send newNote data to the backend via API
-    console.log('New Note:', Data);
-  };
-
-  const handleDeleteNote = async id => {
-    // Add logic to delete note using the backend API
+  const handleAddNote = async (data) => {
     try {
-      let envString = 'REACT_APP_MICROSERVICE_' + notesApp.toUpperCase();
-      await fetch(process.env[envString] + `/api/notes?id=${id}`, {
+      const response = await fetch('http://localhost:4000/car', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${auth.user.access_token}`,
+
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data)
+        setNotes(prevNotes => [...prevNotes, data]);
+        setNewNote({
+          make: '',
+          model: '',
+          year: '',
+          license_plate: '',
+          color: '',
+          mileage: '',
+          status: 'available',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      } else {
+        console.error('Failed to add note:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error adding note:', error);
+    }
+  };
+  
+  const handleDeleteNote = async id => {
+    try {
+      const response = await fetch(`http://localhost:4000/car/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${auth.user.access_token}`,
+
           'Content-Type': 'application/json',
         },
       });
-      // Assuming the delete was successful, update the local state
-      setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+  
+      if (response.ok) {
+        setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+      } else {
+        console.error('Failed to delete note:', response.statusText);
+      }
     } catch (error) {
       console.error('Error deleting note:', error);
     }
   };
+  
 
   return (
     <div className="container ping">
       <button className="ping-button" onClick={() => setOpenModal(true)} style={{ alignItems: 'revert-layer' }}>
-        Add note
+        Add Car
       </button>
-      <Modal isOpen={openModal} onClose={() => setOpenModal(false)} onSubmit={handleSubmit} />
-      {showAddNotePopup && (
-        <div className="popup">
-          <div className="popup-content">
-            <span className="close" onClick={handlePopupClose}>
-              &times;
-            </span>
-            <div style={{ padding: '20px', textAlign: 'center', color: 'black' }}>
-              <label style={{ display: 'block', marginBottom: '10px' }}>
-                Subject:
-                <input
-                  type="text"
-                  name="subject"
-                  value={newNote.subject}
-                  onChange={handleInputChange}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </label>
-              <label style={{ display: 'block', marginBottom: '10px' }}>
-                Summary:
-                <textarea
-                  name="summary"
-                  value={newNote.summary}
-                  onChange={handleInputChange}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    boxSizing: 'border-box',
-                    minHeight: '80px',
-                  }}
-                />
-              </label>
-              <button
-                onClick={handleAddNote}
-                style={{
-                  backgroundColor: '#4CAF50',
-                  color: 'white',
-                  padding: '10px 20px',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                }}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      <Modal isOpen={openModal} onClose={() => setOpenModal(false)} onSubmit={handleAddNote} />
+      {/* Your popup JSX code */}
       <table style={{ borderCollapse: 'collapse', width: '100%' }}>
         <thead>
           <tr style={{ color: 'black', backgroundColor: '#f2f2f2' }}>
-            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>Sno</th>
-            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>Subject</th>
-            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>Summary</th>
-            <th style={{ padding: '10px', border: '1px solid #dddddd' }}></th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>id</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>make</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>model</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>year</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>license_plate</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>color</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>mileage</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>status</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>created_at</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>updated_at</th>
+            <th style={{ padding: '10px', border: '1px solid #dddddd' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {notes.map((note, index) => (
-            <tr
-              key={index}
-              style={{
-                color: 'black',
-                backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'white',
-              }}
-            >
-              <td style={{ padding: '10px', border: '1px solid #dddddd' }}>{index + 1}</td>
-              <td style={{ padding: '10px', border: '1px solid #dddddd' }}>{note.subject}</td>
-              <td style={{ padding: '10px', border: '1px solid #dddddd' }}>{note.description}</td>
-              <td
-                style={{
-                  padding: '10px',
-                  border: '1px solid #dddddd',
-                  textAlign: 'center',
-                }}
-              >
-                <MdDeleteOutline style={{ fontSize: 20, color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteNote(note.id)} />{' '}
+            <tr key={index} style={{ color: 'black', backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
+              {/* Render your note data here */}
+              <td>{index + 1}</td>
+              {/* Render other columns */}
+              <td>{note.make}</td>
+              <td>{note.model}</td>
+              <td>{note.year}</td>
+              <td>{note.license_plate}</td>
+              <td>{note.color}</td>
+              <td>{note.mileage}</td>
+              <td>{note.status}</td>
+              <td>{note.created_at}</td>
+              <td>{note.updated_at}</td>
+              <td>
+                <MdDeleteOutline
+                  style={{ fontSize: 20, color: 'red', cursor: 'pointer' }}
+                  onClick={() => handleDeleteNote(note.id)}
+                />
               </td>
             </tr>
           ))}

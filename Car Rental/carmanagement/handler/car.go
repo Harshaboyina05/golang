@@ -30,6 +30,7 @@ func AddCar(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	var car *Car
 	_ = json.NewDecoder(request.Body).Decode(&car)
+	logger.Info(car)
 	carData := Car{
 		Make:         car.Make,
 		Model:        car.Model,
@@ -46,6 +47,7 @@ func AddCar(response http.ResponseWriter, request *http.Request) {
 
 	// Simulated database operation
 	logger.Infof("Inserted data")
+	logger.Info(carData)
 	json.NewEncoder(response).Encode(carData)
 }
 
@@ -110,13 +112,9 @@ func UpdateCar(response http.ResponseWriter, request *http.Request) {
 // DeleteCar deletes a specific car by its ID
 func DeleteCar(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
-	queryParams := request.URL.Query() // Use request.URL.Query() to parse query parameters directly
-	idValues, ok := queryParams["id"]
-	if !ok || len(idValues) == 0 {
-		http.Error(response, "Missing or empty 'id' parameter", http.StatusBadRequest)
-		return
-	}
-	id := idValues[0]
+	params := mux.Vars(request)
+	id := params["id"]
+	logger.Info(id)
 	// Perform database operation to delete car by ID
 	result := dbClient.Table(carTableName).Where("id = ?", id).Delete(&Car{})
 	if result.Error != nil {

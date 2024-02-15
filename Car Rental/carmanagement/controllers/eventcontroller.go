@@ -6,6 +6,7 @@ import (
 
 	"com.carmanagement/auth"
 	"com.carmanagement/handler"
+	"com.carmanagement/middleware"
 
 	"github.com/gorilla/mux"
 	"github.com/micro/micro/v3/service/logger"
@@ -14,11 +15,12 @@ import (
 type EventController struct{}
 
 func (t EventController) RegisterRoutes(r *mux.Router) {
-	r.Handle("/car/AddCar", auth.Protect(http.HandlerFunc(handler.AddCar))).Methods(http.MethodPost)
-	r.Handle("/car/GetCars", auth.Protect(http.HandlerFunc(handler.GetCars))).Methods(http.MethodGet)
-	r.Handle("/car/{id}", auth.Protect(http.HandlerFunc(handler.GetCarByID))).Methods(http.MethodGet)
-	r.Handle("/car/{id}", auth.Protect(http.HandlerFunc(handler.UpdateCar))).Methods(http.MethodPut)
-	r.Handle("/car/{id}", auth.Protect(http.HandlerFunc(handler.DeleteCar))).Methods(http.MethodDelete)
+	r.Use(middleware.CORSMiddleware)
+	r.Handle("/car", auth.Protect(http.HandlerFunc(handler.AddCar))).Methods(http.MethodPost, http.MethodOptions)
+	r.Handle("/car", auth.Protect(http.HandlerFunc(handler.GetCars))).Methods(http.MethodGet, http.MethodOptions)
+	r.Handle("/car/{id}", auth.Protect(http.HandlerFunc(handler.GetCarByID))).Methods(http.MethodGet, http.MethodOptions)
+	r.Handle("/car/{id}", auth.Protect(http.HandlerFunc(handler.UpdateCar))).Methods(http.MethodPut, http.MethodOptions)
+	r.Handle("/car/{id}", auth.Protect(http.HandlerFunc(handler.DeleteCar))).Methods(http.MethodDelete, http.MethodOptions)
 
 	r.HandleFunc("/management/health/readiness", func(w http.ResponseWriter, _ *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{

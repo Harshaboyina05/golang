@@ -1,0 +1,29 @@
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .button-container {
+    position: fixed;
+    bottom: 90px;
+    right: 500px;
+    z-index: 100; /* Ensure it's above other content */
+  }
+  
+  .book-now-button {
+    font-weight: bold;
+    padding: 10px 30px;
+    border: 2px solid #333;
+    background-color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .book-now-button:hover {
+    background-color: #333;
+    color: #fff;
+  }
+  

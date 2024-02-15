@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import headerImg from '../assets/img/logox.png';
+import headerImg from '../assets/img/car.jpeg';
 import { ArrowRightCircle } from 'react-bootstrap-icons';
 import 'animate.css';
 import TrackVisibility from 'react-on-screen';
@@ -11,7 +11,7 @@ export const Banner = () => {
   const [text, setText] = useState('');
   const [delta, setDelta] = useState(300 - Math.random() * 100);
   const [index, setIndex] = useState(1);
-  const toRotate = ['React Application', 'Generated via WeDAA'];
+  const toRotate = ['Want Car For Rent ?'];
   const period = 2000;
 
   useEffect(() => {
@@ -59,19 +59,17 @@ export const Banner = () => {
                 <div className={isVisible ? 'animate__animated animate__fadeIn' : ''}>
                   <span className="tagline">Welcome to {process.env.REACT_APP_PROJECT_NAME}</span>
                   <h1>
-                    <span className="txt-rotate" dataPeriod="1000" data-rotate='[ "React Application","Generated via WeDAA" ]'>
+                    <span className="txt-rotate" dataPeriod="1000" data-rotate='[ "React Application" ]'>
                       <span className="wrap">{text}</span>
                     </span>
                   </h1>
                   <p>
-                    Ready to dive into React?
+                    Car Renting Made Easy
                     <br></br>
                     <br></br>
-                    WeDAA gets you started fast, while offering flexibility for your creative touch. Explore organized code with
-                    user-friendly docs, customize effortlessly, and follow best practices effortlessly for a winning app. With quick
-                    iterations and a supportive community, your coding journey begins here. Let's build something amazing together!
+                    
                   </p>
-                  <button onClick={() => window.open(process.env.REACT_APP_WEDAA_DOCS, '_blank')} className="get-started-button">
+                  <button onClick={() => window.open("http://localhost:3001/selectcar")} className="get-started-button">
                     Get Started <ArrowRightCircle size={25} />
                   </button>
                 </div>

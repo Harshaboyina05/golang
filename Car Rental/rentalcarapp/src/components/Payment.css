@@ -1,0 +1,8 @@
+.details-container {
+    display: flex;
+    gap: 20px; /* Adjust the gap between user and car details */
+}
+
+.user-details, .car-details {
+    flex: 1;
+}

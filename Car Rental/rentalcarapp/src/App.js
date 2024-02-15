@@ -8,6 +8,10 @@ import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 import PrivateRoute from './config/auth/privateRoute';
 import NotesList from './components/notes/NotesList';
+import CustomerList from './components/customer/CustomerList';
+import CarSelection from './components/CarSelection';
+import UserDetails from './components/UserDetails';
+import Payment from './components/Payment';
 
 function App() {
   return (
@@ -16,6 +20,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Banner />} />
+          <Route path="/selectcar" element={<PrivateRoute><CarSelection /></PrivateRoute>} />
+          <Route path="/booking" element={<PrivateRoute><UserDetails /></PrivateRoute>} />
+          <Route path="/payment" element={<PrivateRoute><Payment /></PrivateRoute>} />
           <Route
             path="/docs"
             element={
@@ -81,7 +88,7 @@ function App() {
             element={
               <PrivateRoute>
                 <div className="component">
-                  <NotesList notesApp={'customermanagement'} />
+                  <CustomerList customerApp={'customermanagement'} />
                 </div>
               </PrivateRoute>
             }

@@ -103,27 +103,32 @@ func UpdateCustomer(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(map[string]string{"message": fmt.Sprintf("Updated Customer with Id: %s", id)})
 }
 
-// DeleteCustomer deletes a specific customer by its ID
 func DeleteCustomer(response http.ResponseWriter, request *http.Request) {
-	response.Header().Set("content-type", "application/json")
-	queryParams := request.URL.Query() // Use request.URL.Query() to parse query parameters directly
+	response.Header().Set("Content-Type", "application/json")
+
+	// Parse query parameters
+	queryParams := request.URL.Query()
 	idValues, ok := queryParams["id"]
 	if !ok || len(idValues) == 0 {
 		http.Error(response, "Missing or empty 'id' parameter", http.StatusBadRequest)
 		return
 	}
 	id := idValues[0]
+
 	// Perform database operation to delete customer by ID
 	result := dbClient.Table(customerTableName).Where("id = ?", id).Delete(&Customer{})
 	if result.Error != nil {
 		http.Error(response, result.Error.Error(), http.StatusInternalServerError)
+		logger.Errorf("Error deleting customer: %v", result.Error)
 		return
 	}
 	if result.RowsAffected == 0 {
 		http.Error(response, "No customer found with the given ID", http.StatusNotFound)
+		logger.Infof("No customer found with ID: %s", id)
 		return
 	}
-	// Simulated database operation
-	logger.Infof("Deleted Customer with Id: %s", id)
-	json.NewEncoder(response).Encode(map[string]string{"message": "Deleted Customer with Id: " + id})
+
+	// Successful deletion
+	logger.Infof("Deleted customer with ID: %s", id)
+	json.NewEncoder(response).Encode(map[string]string{"message": "Deleted customer with ID: " + id})
 }

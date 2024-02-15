@@ -6,7 +6,7 @@ import (
 
 	"com.customermanagement/auth"
 	"com.customermanagement/handler"
-
+	"com.customermanagement/middleware"
 	"github.com/gorilla/mux"
 	"github.com/micro/micro/v3/service/logger"
 )
@@ -14,11 +14,17 @@ import (
 type EventController struct{}
 
 func (t EventController) RegisterRoutes(r *mux.Router) {
-	r.Handle("/customer/CreateCustomer", auth.Protect(http.HandlerFunc(handler.CreateCustomer))).Methods(http.MethodPost)
-	r.Handle("/customer/GetCustomers", auth.Protect(http.HandlerFunc(handler.GetCustomers))).Methods(http.MethodGet)
-	r.Handle("/customer/{id}", auth.Protect(http.HandlerFunc(handler.GetCustomerByID))).Methods(http.MethodGet)
-	r.Handle("/customer/{id}", auth.Protect(http.HandlerFunc(handler.UpdateCustomer))).Methods(http.MethodPut)
-	r.Handle("/customer/{id}", auth.Protect(http.HandlerFunc(handler.DeleteCustomer))).Methods(http.MethodDelete)
+	// Apply CORS middleware to all routes under this router
+	r.Use(middleware.CORSMiddleware)
+
+	// Register routes
+	r.Handle("/customer", auth.Protect(http.HandlerFunc(handler.CreateCustomer))).Methods(http.MethodPost, http.MethodOptions)
+	r.Handle("/customer", auth.Protect(http.HandlerFunc(handler.GetCustomers))).Methods(http.MethodGet, http.MethodOptions)
+	r.Handle("/customer/{id}", auth.Protect(http.HandlerFunc(handler.GetCustomerByID))).Methods(http.MethodGet, http.MethodOptions)
+	r.Handle("/customer/{id}", auth.Protect(http.HandlerFunc(handler.UpdateCustomer))).Methods(http.MethodPut, http.MethodOptions)
+	r.Handle("/customer/{id}", auth.Protect(http.HandlerFunc(handler.DeleteCustomer))).Methods(http.MethodDelete, http.MethodOptions)
+
+	// Other routes...
 
 	r.HandleFunc("/management/health/readiness", func(w http.ResponseWriter, _ *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{

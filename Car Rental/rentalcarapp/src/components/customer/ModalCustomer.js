@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 
 const Modal = ({ isOpen, onClose, onSubmit }) => {
   const initialData = {
-    make: '',
-    model: '',
-    year: '',
-    license_plate: '',
-    color: '',
-    mileage: '',
-    status: 'available', // Set a default value for status
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone_number: '',
+    address: '', // Set a default value for status
     created_at: new Date().toISOString(), // Set current timestamp for created_at
     updated_at: new Date().toISOString(), // Set current timestamp for updated_at
   };
@@ -24,13 +22,11 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleSubmit = async () => {
     const dataPayload = {
-      make: formData.make,
-      model: formData.model,
-      year: parseInt(formData.year), // Convert to integer
-      license_plate: formData.license_plate,
-      color: formData.color,
-      mileage: parseInt(formData.mileage), // Convert to integer
-      status: formData.status,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email, // Convert to integer
+      phone_number: formData.phone_number,
+      address: formData.address,
       created_at: formData.created_at,
       updated_at: formData.updated_at
     };

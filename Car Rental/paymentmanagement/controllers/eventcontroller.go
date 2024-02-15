@@ -6,7 +6,6 @@ import (
 
 	"com.paymentmanagement/auth"
 	"com.paymentmanagement/handler"
-
 	"github.com/gorilla/mux"
 	"github.com/micro/micro/v3/service/logger"
 )
@@ -14,11 +13,11 @@ import (
 type EventController struct{}
 
 func (t EventController) RegisterRoutes(r *mux.Router) {
-	r.Handle("/payment/CreatePayment", auth.Protect(http.HandlerFunc(handler.CreatePayment))).Methods(http.MethodPost)
-	r.Handle("/payment/GetPayments", auth.Protect(http.HandlerFunc(handler.GetPayments))).Methods(http.MethodGet)
-	r.Handle("/payment/{id}", auth.Protect(http.HandlerFunc(handler.GetPaymentByID))).Methods(http.MethodGet)
-	r.Handle("/payment/{id}", auth.Protect(http.HandlerFunc(handler.UpdatePayment))).Methods(http.MethodPut)
-	r.Handle("/payment/{id}", auth.Protect(http.HandlerFunc(handler.DeletePayment))).Methods(http.MethodDelete)
+	r.Handle("/payment", auth.Protect(http.HandlerFunc(handler.CreatePayment))).Methods(http.MethodPost, http.MethodOptions)
+	r.Handle("/payment", auth.Protect(http.HandlerFunc(handler.GetPayments))).Methods(http.MethodGet, http.MethodOptions)
+	r.Handle("/payment/{id}", auth.Protect(http.HandlerFunc(handler.GetPaymentByID))).Methods(http.MethodGet, http.MethodOptions)
+	r.Handle("/payment/{id}", auth.Protect(http.HandlerFunc(handler.UpdatePayment))).Methods(http.MethodPut, http.MethodOptions)
+	r.Handle("/payment/{id}", auth.Protect(http.HandlerFunc(handler.DeletePayment))).Methods(http.MethodDelete, http.MethodOptions)
 
 	r.HandleFunc("/management/health/readiness", func(w http.ResponseWriter, _ *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{

@@ -1,0 +1,38 @@
+/* UserDetails.css */
+.user-details {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box; /* Ensure padding doesn't add to the width */
+  margin-bottom: 15px; /* Adjust this value as needed */
+}
+
+.button-container {
+  text-align: right;
+  margin-top: 15px;
+}
+
+.button {
+  font-weight: bold;
+  padding: 10px 20px;
+  border: 2px solid #333;
+  background-color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #333;
+  color: #fff;
+}
